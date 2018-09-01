@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  nginx:
+    build: ./nginx
+    container_name: practice-nginx
+    depends_on:
+      - web
+    links:
+      - web:web
+    networks:
+      - practice
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+
+  web:
+    build: .
+    container_name: practice-django
+    environment:
+      - DOCKER_CONTAINER=True
+    networks:
+      - practice
+    restart: unless-stopped
+
+networks:
+  practice:
+    driver: bridge
