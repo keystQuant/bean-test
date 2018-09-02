@@ -17,12 +17,32 @@ services:
   web:
     build: .
     container_name: practice-django
+    depends_on:
+      - cache
+    links:
+      - cache:cache
     environment:
       - DOCKER_CONTAINER=True
     networks:
       - practice
     restart: unless-stopped
 
+  cache:
+    container_name: practice-redis
+    command: redis-server --requirepass xptmxm123 --appendonly yes
+    image: redis
+    networks:
+      - practice
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+    volumes:
+      - cache_data:/data
+
+
 networks:
   practice:
     driver: bridge
+
+volumes:
+  cache_data:
