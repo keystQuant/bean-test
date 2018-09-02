@@ -14,9 +14,9 @@ class UpbitAPIView(generics.ListCreateAPIView):
     serializer_class = UpbitSerializer
 
     def get_queryset(self, *args, **kwargs):
-        if cache.exists('UPBIT_DATA'):
-            data = cache.get('UPBIT_DATA')
-            return data
-        else:
+        data = cache.get('UPBIT_DATA')
+        if data == None:
             cache.set('UPBIT_DATA', Upbit.objects.all())
             return Upbit.objects.all()
+        else:
+            return data
