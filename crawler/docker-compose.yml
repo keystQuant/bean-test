@@ -18,7 +18,7 @@ services:
     links:
       - app:app
     ports:
-      - 3000:3000
+      - 7777:7777
     depends_on:
       - app
     restart: unless-stopped

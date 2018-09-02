@@ -30,7 +30,7 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/TASK', async (req, res) => {
-  const msg = 'crawl fnguide';
+  const msg = 'crawl upbit';
   sendToQueue(msg);
   res.status(200);
   res.send('CRAWL TASK SENT');

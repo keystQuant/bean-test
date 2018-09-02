@@ -1,19 +1,7 @@
 const amqp = require('amqplib/callback_api');
+const axios = require('axios');
 
-const puppeteer = require('puppeteer');
-
-const URL = 'http://fnguide.com/api/Fgdd/StkIndByTimeGrdDataDate?IN_SEARCH_DT=20180831&IN_SEARCH_TYPE=I&IN_KOS_VALUE=0';
-
-const LOGIN_PAGE = 'https://www.fnguide.com/home/login'
-
-const IDInputSelector = '#txtID';
-const PWInputSelector = '#txtPW';
-const loginBtnSelector = '#container > div > div > div.log--wrap > div.log--area > form > div > fieldset > button';
-const logoutOtherIPUserBtnSelector = '#divLogin > div.lay--popFooter > form > button.btn--back';
-const FnguideLogoSelector = 'body > div.header > div > h1 > a';
-
-const ID = 'keystone2016';
-const PW = 'keystone2016';
+const API = require('./api.js');
 
 amqp.connect('amqp://admin:admin123@rabbit:5672//', (err, conn) => {
   conn.createChannel((err, ch) => {
@@ -26,51 +14,13 @@ amqp.connect('amqp://admin:admin123@rabbit:5672//', (err, conn) => {
       const receivedMSG = JSON.parse(msg.content.toString());
       console.log(receivedMSG);
 
-      if (receivedMSG === 'crawl fnguide') {
-
-        const puppeteerConfig = {
-          headless: true,
-          args: ['--no-sandbox'],
-          slowMo: 100,
-        };
-        const browser = await puppeteer.launch(puppeteerConfig);
-        const page = await browser.newPage();
-
-        await page.goto(LOGIN_PAGE);
-        await page.waitForSelector(IDInputSelector);
-        await page.click(IDInputSelector);
-        await page.type(IDInputSelector, ID);
-        await page.click(PWInputSelector);
-        await page.type(PWInputSelector, PW);
-        await page.click(loginBtnSelector);
-
-        const logoutOtherIPUserBtnExists = await page.$eval(
-          logoutOtherIPUserBtnSelector,
-          el => (!!el),
-        ).catch((error) => { console.log(error); });
-        if (logoutOtherIPUserBtnExists) {
-          await page.click(logoutOtherIPUserBtnSelector);
+      if (receivedMSG === 'crawl upbit') {
+        const api = new API.API();
+        const data = await api.requestUpbit();
+        const postData = await api.formatData(data);
+        for (const jsonData of postData) {
+          await api.saveData(jsonData);
         }
-
-        // issues with waitForSelector
-        // force wait for 5 seconds before waitForSelector
-        // initially waited for userIDSelector but didn't work
-        // so now waiting for FnguideLogoSelector
-        // console.log('page waiting 5 secs')
-        await page.waitFor(5000)
-          .then(() => {
-            page.waitForSelector(FnguideLogoSelector).then().catch();
-          });
-
-        await page.goto(URL);
-        const data = await page.evaluate(() => {
-          const data = JSON.parse(document.querySelector('body').innerText);
-          return data
-        });
-        console.log(data);
-
-        browser.close();
-
       }
 
     }, { noAck: false });

@@ -25,7 +25,7 @@ SECRET_KEY = '3^@(so0^fh46@f2(jla6ozjni3qn(82zf&*g2l255jk3xyh^qz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['45.76.101.102']
+ALLOWED_HOSTS = ['127.0.0.1', '127.0.1.1', '45.76.101.102']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'fnguide',
+    'upbit',
 ]
 
 MIDDLEWARE = [
