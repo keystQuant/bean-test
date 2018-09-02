@@ -18,4 +18,5 @@ class UpbitAPIView(generics.ListCreateAPIView):
             data = cache.get('UPBIT_DATA')
             return data
         else:
+            cache.set('UPBIT_DATA', Upbit.objects.all())
             return Upbit.objects.all()
