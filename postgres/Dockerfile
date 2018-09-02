@@ -10,13 +10,13 @@ RUN apt-get update && apt-get install -y postgresql-9.6 postgresql-client-9.6 po
 
 USER postgres
 
-RUN /etc/init.d/postgresql start && \
-    psql --command "CREATE DATABASE practice;" && \
-    psql --command "CREATE USER practice WITH SUPERUSER PASSWORD 'xptmxm123';" && \
-    psql --command "ALTER ROLE practice SET client_encoding TO 'utf8';" && \
-    psql --command "ALTER ROLE practice SET default_transaction_isolation TO 'read committed';" && \
-    psql --command "ALTER ROLE practice SET timezone TO 'UTC';" && \
-    psql --command "GRANT ALL PRIVILEGES ON DATABASE practice TO practice;"
+RUN /etc/init.d/postgresql start
+RUN psql --command "CREATE DATABASE practice;"
+RUN psql --command "CREATE USER practice WITH SUPERUSER PASSWORD 'xptmxm123';"
+RUN psql --command "ALTER ROLE practice SET client_encoding TO 'utf8';"
+RUN psql --command "ALTER ROLE practice SET default_transaction_isolation TO 'read committed';"
+RUN psql --command "ALTER ROLE practice SET timezone TO 'UTC';"
+RUN psql --command "GRANT ALL PRIVILEGES ON DATABASE practice TO practice;"
 
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.6/main/pg_hba.conf
 
